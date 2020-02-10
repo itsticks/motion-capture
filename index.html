@@ -1,27 +1,34 @@
 <html>
 <head>
-<title>motion detector</title>
+<title>motion capture</title>
  <style>
-#camStream, #canvas {
+   body{text-align:center;}
+#camStream, #canvas, #canvasFinal {
   opacity:0;
   position:fixed;
   top:0;
   left:0;
+  z-index: -666;
 }
  </style>
 </head>
 
 
 <body>
-<h1>motion detect</h1>
+<h1>motion capture</h1>
  <video id="camStream"></video>
     <canvas id="canvas"></canvas>
     <canvas id="canvasFinal"></canvas> 
-
-    <div id='captures'>
-
-    </div>
-
+<div>
+<label for='threshold'>Threshold 
+  <input id='threshold' type='range' value='850000' min='0' max='1000000' step='1' oninput="document.getElementById('thresholdValue').innerHTML = this.value"/> 
+  <span id='thresholdValue'>850000</span>
+  &nbsp;<strong>|</strong>&nbsp;
+  <span id='motion'>0</span>
+</label>
+</div>
+    <canvas id='animation'></canvas>
+    <div id='captures'></div>
 <script src='motiondetector.js'></script>
 </body>
 
