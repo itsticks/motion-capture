@@ -99,6 +99,12 @@ var image = document.createElement('img');
 image.style.width='20px';
 image.src = ctx.toDataURL();
 document.getElementById('captures').append(image);
+image.onclick = function(){
+  [].slice.call(document.getElementById('captures').getElementsByTagName('img')).forEach(function(x,i){
+    x.style.width='20px';
+  })
+  this.style.width = '500px';
+}
   }
 
 function compareTwoImages(img1,img2){
