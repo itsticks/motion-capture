@@ -82,8 +82,34 @@ var MotionDetector = (function() {
         x += 4; 
       }
       ctxFinal.putImageData(imgData, 0, 0);
+      console.log(compareTwoImages(imgDataPrev[0],imgDataPrev[1]));
+
+      if(compareTwoImages(imgDataPrev[0],imgDataPrev[1]) > 700000)
+      {
+        captureImage(canvas);
+      }
+
+
     }
+
   }
+
+  function captureImage(ctx){
+var image = document.createElement('img');
+image.style.width='20px';
+image.src = ctx.toDataURL();
+document.getElementById('captures').append(image);
+  }
+
+function compareTwoImages(img1,img2){
+  var diffPixels = 0;
+for(var i =0; i < img1.data.length; i++){
+  if(img1.data[i] !=img2.data[i]){
+    diffPixels++;
+  }
+}
+return diffPixels;
+}
 
   
   function init_() {
