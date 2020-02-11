@@ -15,7 +15,7 @@ var MotionCapture = (function() {
   var ctx = canvas.getContext('2d');
   var animationCanvas = document.getElementById('animation');
   var aniCtx = animationCanvas.getContext('2d');
-  var threshold = 830000;
+  var changeThreshold = 830000;
   var localStream = null;
   var imgData = null;
   var imgDataPrev = [null,null];
@@ -45,25 +45,27 @@ var MotionCapture = (function() {
       animationCanvas.width = video.offsetWidth;
       animationCanvas.height = video.offsetHeight;
   
-      threshold = document.getElementById('threshold').value;
+      changeThreshold = document.getElementById('threshold').value;
       ctx.drawImage(video, 0, 0);
 
       // Must capture image data in new instance as it is a live reference.
       // Use alternative live referneces to prevent messed up data.
-      imgDataPrev[version] = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      version = (version == 0) ? 1 : 0;
       imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      imgDataPrev[version] = imgData;
+      version = (version == 0) ? 1 : 0;
 
       var length = imgData.data.length;
-      document.getElementById('threshold').max=length;
+      //document.getElementById('threshold').max=length;
 
       var difference = compareTwoImages(imgDataPrev[0],imgDataPrev[1]);
-      if(difference > threshold)
+      document.body.style.border = '2px solid white';
+      if(difference > changeThreshold)
       {
         captureImage(canvas);
+        document.body.style.border = '2px solid red';
       }
       if(difference>0){
-        document.getElementById('motion').innerHTML = (compareTwoImages(imgDataPrev[0],imgDataPrev[1])) + ' <strong>/</strong> ' + length;
+        document.getElementById('motion').innerHTML = (difference) + ' <strong>/</strong> ' + length;
       }
     }
   }
@@ -86,6 +88,7 @@ image.onclick = function(){
   aniCtx.drawImage(img,0,0);
   this.style.opacity=0.5;
 }
+
 document.getElementById('captures').append(image);
 
 }
@@ -104,13 +107,17 @@ return diffPixels;
 
 function step(){
   stepCount++;
-  if(stepCount%30 && playing){
+  if(stepCount%5==0 && playing){
     snapshot();
   if(frame<frames.length){
     frame++;
   } else{frame=0;}
   if(frames[frame]!==undefined){
 aniCtx.putImageData(frames[frame],0,0);
+[].slice.call(document.getElementById('captures').getElementsByTagName('img'))
+.forEach(function(x,i){
+  x.style.opacity=i===frame?0.5:1;
+})
   }
 }
 window.requestAnimationFrame(step);
@@ -123,8 +130,10 @@ window.requestAnimationFrame(step);
     } else { 
       console.error('Your browser does not support getUserMedia');
     }
-    // window.setInterval(snapshot, 32);
+    window.onload=function(){
     window.requestAnimationFrame(step);
+    
+    }
   }
 
   return {
